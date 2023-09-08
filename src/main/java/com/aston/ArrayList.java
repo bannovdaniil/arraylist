@@ -31,6 +31,34 @@ public class ArrayList<T> {
         currentPosition = index;
     }
 
+    public T remove(int index) {
+        checkBounds(index);
+        T element = array[index];
+        array[index] = null;
+        return element;
+    }
+
+
+    public boolean remove(T element) {
+        boolean result = false;
+        for (int i = 0; i < array.length; i++) {
+            if (element == null) {
+                if (array[i] == null) {
+                    result = true;
+                    break;
+                }
+            } else {
+                if (element.equals(array[i])) {
+                    array[i] = null;
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
     public T get(int index) {
         checkBounds(index);
         return array[index];
