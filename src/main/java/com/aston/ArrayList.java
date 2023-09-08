@@ -1,5 +1,7 @@
 package com.aston;
 
+import java.util.Arrays;
+
 public class ArrayList<T> {
     private T[] array;
     private static final int DEFAULT_CAPACITY = 2;
@@ -64,6 +66,11 @@ public class ArrayList<T> {
         return array[index];
     }
 
+    public void clear() {
+        Arrays.fill(array, null);
+        currentPosition = 0;
+    }
+
     private void growArray(int index) {
         long newCapacity = array.length * MULTIPLIER;
         if (newCapacity < index) {
@@ -86,4 +93,8 @@ public class ArrayList<T> {
         }
     }
 
+    @Override
+    public String toString() {
+        return "{" + Arrays.toString(array) + '}';
+    }
 }
