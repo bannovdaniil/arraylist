@@ -28,9 +28,13 @@ public class ArrayList<T> {
         if (index >= array.length) {
             growArray(index);
         }
+        set(index, element);
+        currentPosition = index;
+    }
+
+    public void set(int index, T element) {
         checkBounds(index);
         array[index] = element;
-        currentPosition = index;
     }
 
     public T remove(int index) {
@@ -39,7 +43,6 @@ public class ArrayList<T> {
         array[index] = null;
         return element;
     }
-
 
     public boolean remove(T element) {
         boolean result = false;
