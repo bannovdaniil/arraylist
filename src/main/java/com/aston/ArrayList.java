@@ -22,6 +22,13 @@ public class ArrayList<T> {
         currentPosition++;
     }
 
+    public T get(int index) {
+        if (index >= array.length) {
+            throw new IndexOutOfBoundsException();
+        }
+        return array[index];
+    }
+
     private void growArray() {
         T[] newArray = (T[]) new Object[array.length * MULTIPLIER];
         System.arraycopy(newArray, 0, newArray, 0, array.length);
