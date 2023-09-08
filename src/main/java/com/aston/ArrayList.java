@@ -16,23 +16,46 @@ public class ArrayList<T> {
 
     public void add(T element) {
         if (currentPosition >= array.length) {
-            growArray();
+            growArray(currentPosition);
         }
         array[currentPosition] = element;
         currentPosition++;
     }
 
-    public T get(int index) {
+    public void add(int index, T element) {
         if (index >= array.length) {
-            throw new IndexOutOfBoundsException();
+            growArray(index);
         }
+        checkBounds(index);
+        array[index] = element;
+        currentPosition = index;
+    }
+
+    public T get(int index) {
+        checkBounds(index);
         return array[index];
     }
 
-    private void growArray() {
-        T[] newArray = (T[]) new Object[array.length * MULTIPLIER];
-        System.arraycopy(newArray, 0, newArray, 0, array.length);
+    private void growArray(int index) {
+        long newCapacity = array.length * MULTIPLIER;
+        if (newCapacity < index) {
+            newCapacity = index + DEFAULT_CAPACITY;
+        }
+        if (newCapacity > Integer.MAX_VALUE) {
+            newCapacity = Integer.MAX_VALUE;
+        }
+
+        T[] newArray = (T[]) new Object[(int) newCapacity];
+        System.arraycopy(this.array, 0, newArray, 0, array.length);
         this.array = newArray;
+        System.out.println("new size: " + array.length);
+    }
+
+
+    private void checkBounds(int index) {
+        if (index < 0 || index >= array.length) {
+            throw new IndexOutOfBoundsException();
+        }
     }
 
 }
