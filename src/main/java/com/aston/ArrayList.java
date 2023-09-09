@@ -88,16 +88,7 @@ public class ArrayList<T> {
     }
 
     public void sort(Comparator<? super T> comparator) {
-        int countOfNull = 0;
-        int saveLastPosition = lastPosition;
-        while (remove(null)) {
-            countOfNull++;
-        }
         quickSort(0, lastPosition - 1, comparator);
-        if (countOfNull > 0) {
-            Arrays.fill(array, lastPosition, array.length - 1, null);
-            lastPosition = saveLastPosition;
-        }
     }
 
     private void quickSort(int low, int high, Comparator comparator) {
