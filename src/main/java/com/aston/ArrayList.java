@@ -8,7 +8,6 @@ public class ArrayList<T> {
     private static final int DEFAULT_CAPACITY = 2;
     private static final int MULTIPLIER = 2;
     private int lastPosition = 0;
-    private int nullElement = 0;
 
     public ArrayList() {
         this.array = (T[]) new Object[DEFAULT_CAPACITY];
@@ -22,9 +21,6 @@ public class ArrayList<T> {
         if (lastPosition >= array.length) {
             growArray(lastPosition);
         }
-        if (element == null) {
-            nullElement++;
-        }
         array[lastPosition] = element;
         lastPosition++;
     }
@@ -35,22 +31,12 @@ public class ArrayList<T> {
             growArray(lastPosition);
         }
         System.arraycopy(array, index, array, index + 1, lastPosition - index);
-        if (element == null) {
-            nullElement++;
-        }
         array[index] = element;
         lastPosition++;
     }
 
     public void set(int index, T element) {
         checkBounds(index);
-        if (element == null) {
-            nullElement++;
-        } else {
-            if (array[index] == null) {
-                nullElement--;
-            }
-        }
         array[index] = element;
     }
 
@@ -60,9 +46,6 @@ public class ArrayList<T> {
         System.arraycopy(array, index + 1, array, index, lastPosition - index - 1);
         lastPosition--;
         array[lastPosition] = null;
-        if (element == null) {
-            nullElement--;
-        }
         return element;
     }
 
@@ -105,10 +88,16 @@ public class ArrayList<T> {
     }
 
     public void sort(Comparator<? super T> comparator) {
-        if (nullElement > 0) {
-            throw new NullPointerException("List contains null element.");
+        int countOfNull = 0;
+        int saveLastPosition = lastPosition;
+        while (remove(null)) {
+            countOfNull++;
         }
         quickSort(0, lastPosition - 1, comparator);
+        if (countOfNull > 0) {
+            Arrays.fill(array, lastPosition, array.length - 1, null);
+            lastPosition = saveLastPosition;
+        }
     }
 
     private void quickSort(int low, int high, Comparator comparator) {
