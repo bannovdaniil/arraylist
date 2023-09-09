@@ -1,12 +1,13 @@
 package com.aston;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class ArrayList<T> {
     private T[] array;
     private static final int DEFAULT_CAPACITY = 2;
     private static final int MULTIPLIER = 2;
-    private int currentPosition = 0;
+    private int lastPosition = 0;
 
     public ArrayList() {
         this.array = (T[]) new Object[DEFAULT_CAPACITY];
@@ -17,19 +18,23 @@ public class ArrayList<T> {
     }
 
     public void add(T element) {
-        if (currentPosition >= array.length) {
-            growArray(currentPosition);
+        if (lastPosition >= array.length) {
+            growArray(lastPosition);
         }
-        array[currentPosition] = element;
-        currentPosition++;
+        array[lastPosition] = element;
+        lastPosition++;
     }
 
-    public void add(int index, T element) {
-        if (index >= array.length) {
-            growArray(index);
+    public void insert(int index, T element) {
+        if (index > lastPosition) {
+            throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, lastPosition));
         }
+        if (lastPosition + 1 >= array.length) {
+            growArray(lastPosition);
+        }
+        System.arraycopy(array, index, array, index + 1, lastPosition - index);
         set(index, element);
-        currentPosition = index;
+        lastPosition++;
     }
 
     public void set(int index, T element) {
@@ -41,12 +46,15 @@ public class ArrayList<T> {
         checkBounds(index);
         T element = array[index];
         array[index] = null;
+        if (index == lastPosition - 1) {
+            lastPosition--;
+        }
         return element;
     }
 
     public boolean remove(T element) {
         boolean result = false;
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < lastPosition; i++) {
             if (element == null) {
                 if (array[i] == null) {
                     result = true;
@@ -56,6 +64,9 @@ public class ArrayList<T> {
                 if (element.equals(array[i])) {
                     array[i] = null;
                     result = true;
+                    if (i == lastPosition - 1) {
+                        lastPosition--;
+                    }
                     break;
                 }
             }
@@ -71,7 +82,51 @@ public class ArrayList<T> {
 
     public void clear() {
         Arrays.fill(array, null);
-        currentPosition = 0;
+        lastPosition = 0;
+    }
+
+    public void sort(Comparator<? super T> comparator) {
+        qsort(0, array.length, comparator);
+    }
+
+    public int size() {
+        return lastPosition;
+    }
+
+    private void qsort(int low, int high, Comparator comparator) {
+        int middle = low + (high - low) / 2;
+        T opor = null;
+        while (opor == null) {
+            opor = array[middle];
+            middle--;
+        }
+        int leftBound = low;
+        int rightBound = high;
+        while (leftBound <= rightBound) {
+            while (comparator.compare(opor, array[leftBound]) < 0) {
+                leftBound++;
+            }
+            while (comparator.compare(opor, array[rightBound]) > 0) {
+                rightBound++;
+            }
+            if (leftBound <= rightBound) {
+                T temp = array[leftBound];
+                array[leftBound] = array[rightBound];
+                array[rightBound] = temp;
+                leftBound++;
+                rightBound--;
+            }
+        }
+        if (low < rightBound) {
+            qsort(low, rightBound, comparator);
+        }
+        if (high < leftBound) {
+            qsort(leftBound, high, comparator);
+        }
+    }
+
+    public void rsort() {
+        System.out.println("sort R");
     }
 
     private void growArray(int index) {
@@ -98,6 +153,6 @@ public class ArrayList<T> {
 
     @Override
     public String toString() {
-        return "{" + Arrays.toString(array) + '}';
+        return Arrays.toString(Arrays.copyOfRange(array, 0, lastPosition));
     }
 }
