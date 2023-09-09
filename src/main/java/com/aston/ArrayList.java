@@ -8,6 +8,7 @@ public class ArrayList<T> {
     private static final int DEFAULT_CAPACITY = 2;
     private static final int MULTIPLIER = 2;
     private int lastPosition = 0;
+    private int nullElement = 0;
 
     public ArrayList() {
         this.array = (T[]) new Object[DEFAULT_CAPACITY];
@@ -21,6 +22,9 @@ public class ArrayList<T> {
         if (lastPosition >= array.length) {
             growArray(lastPosition);
         }
+        if (element == null) {
+            nullElement++;
+        }
         array[lastPosition] = element;
         lastPosition++;
     }
@@ -31,12 +35,22 @@ public class ArrayList<T> {
             growArray(lastPosition);
         }
         System.arraycopy(array, index, array, index + 1, lastPosition - index);
-        set(index, element);
+        if (element == null) {
+            nullElement++;
+        }
+        array[index] = element;
         lastPosition++;
     }
 
     public void set(int index, T element) {
         checkBounds(index);
+        if (element == null) {
+            nullElement++;
+        } else {
+            if (array[index] == null) {
+                nullElement--;
+            }
+        }
         array[index] = element;
     }
 
@@ -45,24 +59,29 @@ public class ArrayList<T> {
         T element = array[index];
         System.arraycopy(array, index + 1, array, index, lastPosition - index - 1);
         lastPosition--;
+        array[lastPosition] = null;
+        if (element == null) {
+            nullElement--;
+        }
         return element;
     }
 
-    public boolean remove(T element) {
+    public boolean remove(T findElement) {
         boolean result = false;
-        for (int i = 0; i < lastPosition; i++) {
-            if (element == null) {
+
+        if (findElement == null) {
+            for (int i = 0; i < lastPosition; i++) {
                 if (array[i] == null) {
+                    remove(i);
                     result = true;
                     break;
                 }
-            } else {
-                if (element.equals(array[i])) {
-                    array[i] = null;
+            }
+        } else {
+            for (int i = 0; i < lastPosition; i++) {
+                if (findElement.equals(array[i])) {
+                    remove(i);
                     result = true;
-                    if (i == lastPosition - 1) {
-                        lastPosition--;
-                    }
                     break;
                 }
             }
@@ -81,29 +100,32 @@ public class ArrayList<T> {
         lastPosition = 0;
     }
 
-    public void sort(Comparator<? super T> comparator) {
-        qsort(0, array.length, comparator);
-    }
-
     public int size() {
         return lastPosition;
     }
 
-    private void qsort(int low, int high, Comparator comparator) {
-        int middle = low + (high - low) / 2;
-        T opor = null;
-        while (opor == null) {
-            opor = array[middle];
-            middle--;
+    public void sort(Comparator<? super T> comparator) {
+        if (nullElement > 0) {
+            throw new NullPointerException("List contains null element.");
         }
+        quickSort(0, lastPosition - 1, comparator);
+    }
+
+    private void quickSort(int low, int high, Comparator comparator) {
+        if (low >= high) {
+            return;
+        }
+        int middle = low + (high - low) / 2;
+        T opor = array[middle];
+
         int leftBound = low;
         int rightBound = high;
         while (leftBound <= rightBound) {
-            while (comparator.compare(opor, array[leftBound]) < 0) {
+            while (comparator.compare(array[leftBound], opor) < 0) {
                 leftBound++;
             }
-            while (comparator.compare(opor, array[rightBound]) > 0) {
-                rightBound++;
+            while (comparator.compare(array[rightBound], opor) > 0) {
+                rightBound--;
             }
             if (leftBound <= rightBound) {
                 T temp = array[leftBound];
@@ -114,10 +136,10 @@ public class ArrayList<T> {
             }
         }
         if (low < rightBound) {
-            qsort(low, rightBound, comparator);
+            quickSort(low, rightBound, comparator);
         }
-        if (high < leftBound) {
-            qsort(leftBound, high, comparator);
+        if (high > leftBound) {
+            quickSort(leftBound, high, comparator);
         }
     }
 
