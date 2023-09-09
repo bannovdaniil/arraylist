@@ -3,43 +3,97 @@ package com.aston;
 import java.util.Arrays;
 import java.util.Comparator;
 
+/**
+ * Resizable list with QuickSort based on array.
+ * <p>
+ * The array is used to place elements in the list.
+ * The size of the array can increase by <i>MULTIPLIER</i> if the limit of its capacity is reached.
+ * <p>
+ *
+ * @param <T> the Type of elements in this list
+ * @author Bannov Daniil
+ */
 public class ArrayList<T> {
     private T[] array;
-    private static final int DEFAULT_CAPACITY = 2;
+    private static final int DEFAULT_CAPACITY = 16;
     private static final int MULTIPLIER = 2;
     private int lastPosition = 0;
 
+    /**
+     * Constructs an empty list with an initial capacity of DEFAULT_CAPACITY.
+     */
     public ArrayList() {
         this.array = (T[]) new Object[DEFAULT_CAPACITY];
     }
 
+    /**
+     * Constructs an empty list with an initial capacity of capacity.
+     *
+     * @param capacity the initial capacity of the list
+     * @throws IllegalArgumentException - if the specified initial capacity is wrong
+     */
     public ArrayList(int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Capacity is wrong: " + capacity);
+        }
         this.array = (T[]) new Object[capacity];
     }
 
+    /**
+     * Appends the specified element to the end of this list.
+     *
+     * @param element - to be appended to list.
+     */
     public void add(T element) {
         if (lastPosition >= array.length) {
-            growArray(lastPosition);
+            growArray();
         }
         array[lastPosition] = element;
         lastPosition++;
     }
 
+    /**
+     * Inserts the element at the specified position in list.
+     * Shifts the element currently at that position to the right.
+     * *
+     *
+     * @param index   - position to insertion
+     * @param element - to be inserted
+     * @throws IndexOutOfBoundsException - if index is wrong
+     */
     public void insert(int index, T element) {
         checkBounds(index);
         if (lastPosition + 1 >= array.length) {
-            growArray(lastPosition);
+            growArray();
         }
         System.arraycopy(array, index, array, index + 1, lastPosition - index);
         array[index] = element;
         lastPosition++;
     }
 
-    public void set(int index, T element) {
+    /**
+     * Replaces the element at the position in this list with the new element.
+     *
+     * @param index   - position of element
+     * @param element - to be stored
+     * @return the element previously at the specified position
+     * @throws IndexOutOfBoundsException - if index is wrong
+     */
+    public T set(int index, T element) {
         checkBounds(index);
+        T oldElement = array[index];
         array[index] = element;
+        return oldElement;
     }
 
+    /**
+     * Removes the element at the specified position in this list.
+     * Shifts any subsequent elements to the left.
+     *
+     * @param index - of the element to be removed
+     * @return the element that was removed from the list
+     * @throws IndexOutOfBoundsException - if index is wrong
+     */
     public T remove(int index) {
         checkBounds(index);
         T element = array[index];
@@ -49,10 +103,16 @@ public class ArrayList<T> {
         return element;
     }
 
-    public boolean remove(T findElement) {
+    /**
+     * Removes the first occurrence of the element from this list.
+     *
+     * @param removedElement - element to be removed from this list, if present;
+     * @return - {@code true} if this list contained the specified element
+     */
+    public boolean remove(T removedElement) {
         boolean result = false;
 
-        if (findElement == null) {
+        if (removedElement == null) {
             for (int i = 0; i < lastPosition; i++) {
                 if (array[i] == null) {
                     remove(i);
@@ -62,7 +122,7 @@ public class ArrayList<T> {
             }
         } else {
             for (int i = 0; i < lastPosition; i++) {
-                if (findElement.equals(array[i])) {
+                if (removedElement.equals(array[i])) {
                     remove(i);
                     result = true;
                     break;
@@ -73,24 +133,53 @@ public class ArrayList<T> {
         return result;
     }
 
+    /**
+     * Returns the element at the position in this list.
+     *
+     * @param index
+     * @return - the element at the position in this list
+     * @throws IndexOutOfBoundsException - if index is wrong
+     */
     public T get(int index) {
         checkBounds(index);
         return array[index];
     }
 
+    /**
+     * Removes all of the elements from this list.
+     */
     public void clear() {
         Arrays.fill(array, null);
         lastPosition = 0;
     }
 
+    /**
+     * Returns the number of elements in this list.
+     *
+     * @return - the number of elements in this list.
+     */
     public int size() {
         return lastPosition;
     }
 
+    /**
+     * Sorts the list according to the order induced by the comparator.
+     *
+     * @param comparator - used to compare list elements
+     * @throws NullPointerException - if the list contains (@Code null) elements
+     */
     public void sort(Comparator<? super T> comparator) {
         quickSort(0, lastPosition - 1, comparator);
     }
 
+    /**
+     * Realisation of QuickSort.
+     *
+     * @param low        - bound of array
+     * @param high       - bound of array
+     * @param comparator - used to compare list elements
+     * @throws NullPointerException - if the list contains (@Code null) elements
+     */
     private void quickSort(int low, int high, Comparator comparator) {
         if (low >= high) {
             return;
@@ -123,11 +212,13 @@ public class ArrayList<T> {
         }
     }
 
-    private void growArray(int index) {
+    /**
+     * Resize base array.
+     * Create the new array with new capacity. Copy all elements to the new array.
+     */
+    private void growArray() {
         long newCapacity = array.length * MULTIPLIER;
-        if (newCapacity < index) {
-            newCapacity = index + DEFAULT_CAPACITY;
-        }
+
         if (newCapacity > Integer.MAX_VALUE) {
             newCapacity = Integer.MAX_VALUE;
         }
@@ -136,7 +227,6 @@ public class ArrayList<T> {
         System.arraycopy(this.array, 0, newArray, 0, array.length);
         this.array = newArray;
     }
-
 
     private void checkBounds(int index) {
         if (index < 0 || index >= lastPosition) {
