@@ -26,9 +26,7 @@ public class ArrayList<T> {
     }
 
     public void insert(int index, T element) {
-        if (index > lastPosition) {
-            throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, lastPosition));
-        }
+        checkBounds(index);
         if (lastPosition + 1 >= array.length) {
             growArray(lastPosition);
         }
@@ -45,10 +43,8 @@ public class ArrayList<T> {
     public T remove(int index) {
         checkBounds(index);
         T element = array[index];
-        array[index] = null;
-        if (index == lastPosition - 1) {
-            lastPosition--;
-        }
+        System.arraycopy(array, index + 1, array, index, lastPosition - index - 1);
+        lastPosition--;
         return element;
     }
 
@@ -146,8 +142,8 @@ public class ArrayList<T> {
 
 
     private void checkBounds(int index) {
-        if (index < 0 || index >= array.length) {
-            throw new IndexOutOfBoundsException();
+        if (index < 0 || index >= lastPosition) {
+            throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, lastPosition));
         }
     }
 
