@@ -123,10 +123,6 @@ public class ArrayList<T> {
         }
     }
 
-    public void rsort() {
-        System.out.println("sort R");
-    }
-
     private void growArray(int index) {
         long newCapacity = array.length * MULTIPLIER;
         if (newCapacity < index) {
@@ -139,7 +135,6 @@ public class ArrayList<T> {
         T[] newArray = (T[]) new Object[(int) newCapacity];
         System.arraycopy(this.array, 0, newArray, 0, array.length);
         this.array = newArray;
-        System.out.println("new size: " + array.length);
     }
 
 
