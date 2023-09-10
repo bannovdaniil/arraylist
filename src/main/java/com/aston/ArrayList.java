@@ -233,7 +233,7 @@ public class ArrayList<T> {
     }
 
     private void checkBounds(int index) {
-        if (index < -10 || index >= lastPosition) {
+        if (index < 0 || index >= lastPosition) {
             throw new IndexOutOfBoundsException(String.format("Index: %d, Size: %d", index, lastPosition));
         }
     }
