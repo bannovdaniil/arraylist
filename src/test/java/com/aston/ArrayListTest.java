@@ -3,6 +3,7 @@ package com.aston;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.platform.commons.util.StringUtils;
 
 import java.util.StringJoiner;
 
@@ -110,8 +111,8 @@ class ArrayListTest {
     @DisplayName("Set elements in List")
     @ParameterizedTest
     @CsvSource(value = {
-            "3; '[1, 0, 3]'; 1; 0; '1,2,3'",
-            "4; '[4, 3, 0, 1]'; 2; 0; '4,3,2,1'"
+            "3; '[1, -1, 3]'; 1; -1; '1,2,3'",
+            "4; '[4, 3, -1, 1]'; 2; -1; '4,3,2,1'"
     }, delimiter = ';'
     )
     void set(int expectedCount, String expectedToString, int index, String element, String values) {
@@ -124,24 +125,104 @@ class ArrayListTest {
         Assertions.assertEquals(expectedToString, testStringList.toString());
     }
 
-    @Test
-    void remove() {
+    @DisplayName("Remove elements from List by index")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "2; 2; '[1, 3]'; 1; '1,2,3'",
+            "3; 3; '[4, 2, 1]'; 1; '4,3,2,1'"
+    }, delimiter = ';'
+    )
+    void removeByIndex(int expectedCount, String expectedElement, String expectedToString, int index, String values) {
+        for (String value : values.split(",")) {
+            testStringList.add(value);
+        }
+        String removedElement = testStringList.remove(index);
+
+        Assertions.assertEquals(expectedCount, testStringList.size());
+        Assertions.assertEquals(expectedToString, testStringList.toString());
+        Assertions.assertEquals(expectedElement, removedElement);
     }
 
-    @Test
-    void testRemove() {
+    @DisplayName("Remove elements from List by value")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "3; true; '[1, 2, 3]'; 2; '1,2,2,3'",
+            "3; true; '[4, 2, 1]'; 3; '4,3,2,1'",
+            "4; false; '[4, 3, 2, 1]'; 5; '4,3,2,1'"
+    }, delimiter = ';'
+    )
+    void removeByValue(int expectedCount, boolean expectedResult, String expectedToString, String element, String values) {
+        for (String value : values.split(",")) {
+            testStringList.add(value);
+        }
+        boolean result = testStringList.remove(element);
+
+        Assertions.assertEquals(result, expectedResult);
+        Assertions.assertEquals(expectedCount, testStringList.size());
+        Assertions.assertEquals(expectedToString, testStringList.toString());
     }
 
-    @Test
-    void get() {
+    @DisplayName("Get elements from List by index")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0; 1; '1,2,3'",
+            "2; 2; '4,3,2,1'",
+            "3; 4; '1,2,3,4'"
+    }, delimiter = ';'
+    )
+    void get(int index, String expectedValue, String values) {
+        for (String value : values.split(",")) {
+            testStringList.add(value);
+        }
+        for (int i = 0; i < 3; i++) {
+            String element = testStringList.get(index);
+            Assertions.assertEquals(expectedValue, element);
+        }
     }
 
-    @Test
-    void clear() {
+    @DisplayName("Clear list")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "0; 0; ''",
+            "3; 0; '1,2,3'",
+            "4; 0; '4,3,2,1'"
+    }, delimiter = ';'
+    )
+    void clear(int expectedSizeBefore, int expectedSizeAfter, String values) {
+        if (StringUtils.isNotBlank(values)) {
+            for (String value : values.split(",")) {
+                testStringList.add(value);
+            }
+        }
+        Assertions.assertEquals(expectedSizeBefore, testStringList.size());
+        testStringList.clear();
+        Assertions.assertEquals(expectedSizeAfter, testStringList.size());
     }
 
-    @Test
-    void size() {
+    @DisplayName("Clear list")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "1; 0; 1; 1; 2; '1'",
+            "3; 2; 3; 3; 4; '1,2,3'"
+    }, delimiter = ';'
+    )
+    void size(int expectedAtStart, int expectedAfterRemove, int expectedAfterAdd, int expectedAfterSet, int expectedAfterInsert, String values) {
+        for (String value : values.split(",")) {
+            testStringList.add(value);
+        }
+        Assertions.assertEquals(expectedAtStart, testStringList.size());
+
+        testStringList.remove(0);
+        Assertions.assertEquals(expectedAfterRemove, testStringList.size());
+
+        testStringList.add("new Element");
+        Assertions.assertEquals(expectedAfterAdd, testStringList.size());
+
+        testStringList.set(0, "update Element");
+        Assertions.assertEquals(expectedAfterSet, testStringList.size());
+
+        testStringList.insert(0, "inserted Element");
+        Assertions.assertEquals(expectedAfterInsert, testStringList.size());
     }
 
     @Test
