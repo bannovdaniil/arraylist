@@ -62,6 +62,10 @@ public class ArrayList<T> {
      * @throws IndexOutOfBoundsException - if index is wrong
      */
     public void insert(int index, T element) {
+        if (index == lastPosition) {
+            add(element);
+            return;
+        }
         checkBounds(index);
         if (lastPosition + 1 >= array.length) {
             growArray();
