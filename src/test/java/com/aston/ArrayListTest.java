@@ -1,9 +1,6 @@
 package com.aston;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.platform.commons.util.StringUtils;
@@ -268,4 +265,58 @@ class ArrayListTest {
         Assertions.assertEquals(expectedReverseOrderToString, testIntegerList.toString());
     }
 
+    @DisplayName("IndexOutOfBoundsException then set wrong index")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "-1; Index: -1, Size: 0",
+            "500; Index: 500, Size: 0"
+    }, delimiter = ';'
+    )
+    void testIndexOutOfBoundsExceptionThenSet(int index, String exceptedMessage) {
+        IndexOutOfBoundsException exception = Assertions.assertThrows(
+                IndexOutOfBoundsException.class,
+                () -> {
+                    testStringList.set(index, "exception");
+                },
+                "IndexOutOfBoundsException was expected");
+
+        Assertions.assertEquals(exceptedMessage, exception.getMessage());
+
+    }
+
+    @DisplayName("IndexOutOfBoundsException then insert at the wrong index")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "-1; Index: -1, Size: 0",
+            "500; Index: 500, Size: 0"
+    }, delimiter = ';'
+    )
+    void testIndexOutOfBoundsExceptionThenInsert(int index, String exceptedMessage) {
+        IndexOutOfBoundsException exception = Assertions.assertThrows(
+                IndexOutOfBoundsException.class,
+                () -> {
+                    testStringList.insert(index, "exception");
+                },
+                "IndexOutOfBoundsException was expected");
+
+        Assertions.assertEquals(exceptedMessage, exception.getMessage());
+    }
+
+    @DisplayName("IndexOutOfBoundsException then remove at the wrong index")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "-1; Index: -1, Size: 0",
+            "500; Index: 500, Size: 0"
+    }, delimiter = ';'
+    )
+    void testIndexOutOfBoundsExceptionThenRemove(int index, String exceptedMessage) {
+        IndexOutOfBoundsException exception = Assertions.assertThrows(
+                IndexOutOfBoundsException.class,
+                () -> {
+                    testStringList.insert(index, "exception");
+                },
+                "IndexOutOfBoundsException was expected");
+
+        Assertions.assertEquals(exceptedMessage, exception.getMessage());
+    }
 }
