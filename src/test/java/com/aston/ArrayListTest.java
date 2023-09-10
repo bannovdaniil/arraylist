@@ -107,8 +107,21 @@ class ArrayListTest {
     }
 
 
-    @Test
-    void set() {
+    @DisplayName("Set elements in List")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "3; '[1, 0, 3]'; 1; 0; '1,2,3'",
+            "4; '[4, 3, 0, 1]'; 2; 0; '4,3,2,1'"
+    }, delimiter = ';'
+    )
+    void set(int expectedCount, String expectedToString, int index, String element, String values) {
+        for (String value : values.split(",")) {
+            testStringList.add(value);
+        }
+        testStringList.set(index, element);
+
+        Assertions.assertEquals(expectedCount, testStringList.size());
+        Assertions.assertEquals(expectedToString, testStringList.toString());
     }
 
     @Test
