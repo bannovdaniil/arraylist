@@ -85,6 +85,28 @@ class ArrayListTest {
         Assertions.assertEquals(expectedToString, testIntegerList.toString());
     }
 
+    @DisplayName("Insert elements to List in Loop")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "300",
+            "100500"
+    })
+    void insertInLoop(int expectedCount) {
+        StringJoiner sjExpected = new StringJoiner(", ", "[", "]");
+        testStringList.add("a");
+        testStringList.add("b");
+        sjExpected.add("a");
+        for (int i = 0; i < expectedCount - 2; i++) {
+            testStringList.insert(1, "x");
+            sjExpected.add("x");
+        }
+        sjExpected.add("b");
+
+        Assertions.assertEquals(expectedCount, testStringList.size());
+        Assertions.assertEquals(sjExpected.toString(), testStringList.toString());
+    }
+
+
     @Test
     void set() {
     }
