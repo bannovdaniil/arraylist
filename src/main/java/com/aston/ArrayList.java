@@ -55,7 +55,7 @@ public class ArrayList<T> {
     /**
      * Inserts the element at the specified position in list.
      * Shifts the element currently at that position to the right.
-     * *
+     * If insert in last position of the list. Adding new element to end of list.
      *
      * @param index   - position to insertion
      * @param element - to be inserted
