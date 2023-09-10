@@ -1,6 +1,9 @@
 package com.aston;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.platform.commons.util.StringUtils;
@@ -190,14 +193,16 @@ class ArrayListTest {
     }, delimiter = ';'
     )
     void clear(int expectedSizeBefore, int expectedSizeAfter, String values) {
-        if (StringUtils.isNotBlank(values)) {
-            for (String value : values.split(",")) {
-                testStringList.add(value);
+        for (int i = 0; i < 2; i++) {
+            if (StringUtils.isNotBlank(values)) {
+                for (String value : values.split(",")) {
+                    testStringList.add(value);
+                }
             }
+            Assertions.assertEquals(expectedSizeBefore, testStringList.size());
+            testStringList.clear();
+            Assertions.assertEquals(expectedSizeAfter, testStringList.size());
         }
-        Assertions.assertEquals(expectedSizeBefore, testStringList.size());
-        testStringList.clear();
-        Assertions.assertEquals(expectedSizeAfter, testStringList.size());
     }
 
     @DisplayName("Size of list in action")
