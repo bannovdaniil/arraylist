@@ -1,10 +1,14 @@
 package com.aston;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.platform.commons.util.StringUtils;
 
+import java.util.Comparator;
 import java.util.StringJoiner;
 
 class ArrayListTest {
@@ -199,7 +203,7 @@ class ArrayListTest {
         Assertions.assertEquals(expectedSizeAfter, testStringList.size());
     }
 
-    @DisplayName("Clear list")
+    @DisplayName("Size of list in action")
     @ParameterizedTest
     @CsvSource(value = {
             "1; 0; 1; 1; 2; '1'",
@@ -225,7 +229,43 @@ class ArrayListTest {
         Assertions.assertEquals(expectedAfterInsert, testStringList.size());
     }
 
-    @Test
-    void sort() {
+    @DisplayName("Sort string list")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "'[0, 1, 2, 3, 4, 5]'; '[5, 4, 3, 2, 1, 0]'; '1,0,4,5,3,2'",
+            "'[a, aa, ba, bb, cc]'; '[cc, bb, ba, aa, a]'; 'aa,ba,bb,cc,a'",
+            "'[1, 10, 2, 20, 3, 30]'; '[30, 3, 20, 2, 10, 1]'; '3,20,1,2,30,10'"
+    }, delimiter = ';'
+    )
+    void sortString(String expectedNaturalOrderToString, String expectedReverseOrderToString, String values) {
+        for (String value : values.split(",")) {
+            testStringList.add(value);
+        }
+
+        testStringList.sort(Comparator.naturalOrder());
+        Assertions.assertEquals(expectedNaturalOrderToString, testStringList.toString());
+
+        testStringList.sort(Comparator.reverseOrder());
+        Assertions.assertEquals(expectedReverseOrderToString, testStringList.toString());
     }
+
+    @DisplayName("Sort integer list")
+    @ParameterizedTest
+    @CsvSource(value = {
+            "'[0, 1, 2, 3, 4, 5]'; '[5, 4, 3, 2, 1, 0]'; '1,0,4,5,3,2'",
+            "'[1, 2, 3, 10, 20, 30]'; '[30, 20, 10, 3, 2, 1]'; '3,20,1,2,30,10'"
+    }, delimiter = ';'
+    )
+    void sortInteger(String expectedNaturalOrderToString, String expectedReverseOrderToString, String values) {
+        for (String value : values.split(",")) {
+            testIntegerList.add(Integer.parseInt(value));
+        }
+
+        testIntegerList.sort(Comparator.naturalOrder());
+        Assertions.assertEquals(expectedNaturalOrderToString, testIntegerList.toString());
+
+        testIntegerList.sort(Comparator.reverseOrder());
+        Assertions.assertEquals(expectedReverseOrderToString, testIntegerList.toString());
+    }
+
 }
